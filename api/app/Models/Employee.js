@@ -8,6 +8,9 @@ class Employee extends AbstractModel {
   static getRegisterFields() {
     return ["user_id", "period", "entry_time", "departure_time"];
   }
+  employee() {
+    return this.belongsTo("App/Models/User");
+  }
 }
 
 module.exports = Employee;

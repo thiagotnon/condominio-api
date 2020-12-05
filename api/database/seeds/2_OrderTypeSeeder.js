@@ -1,8 +1,8 @@
-'use strict'
+"use strict";
 
 /*
 |--------------------------------------------------------------------------
-| UserProfileSeeder
+| OrderTypeSeeder
 |--------------------------------------------------------------------------
 |
 | Make use of the Factory instance to seed database with dummy data or
@@ -11,11 +11,17 @@
 */
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
-const Factory = use('Factory')
+const Factory = use("Factory");
+const OrderType = use("App/Models/OrderType");
 
-class UserProfileSeeder {
-  async run () {
+class OrderTypeSeeder {
+  async run() {
+    await OrderType.createMany([
+      { name: "Pacote" },
+      { name: "Envelope" },
+      { name: "Carta" },
+    ]);
   }
 }
 
-module.exports = UserProfileSeeder
+module.exports = OrderTypeSeeder;

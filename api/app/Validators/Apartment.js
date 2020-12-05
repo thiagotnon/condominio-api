@@ -6,6 +6,7 @@ class Apartment extends AbstractValidator {
     return {
       unit_number: "required|min:1",
       block: "required|min:1|max:10",
+      floor: "required|min:1|max:10",
     };
   }
 }

@@ -53,9 +53,7 @@ class LeisureSpaceController {
    */
   async show({ params, request, response, view }) {
     const leisureSpace = await LeisureSpace.findOrFail(params.id);
-
     await leisureSpace.load("images");
-
     return leisureSpace;
   }
 

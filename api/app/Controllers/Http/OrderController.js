@@ -1,10 +1,10 @@
-'use strict'
+"use strict";
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
-const Order = use('App/Models/Order');
+const Order = use("App/Models/Order");
 
 /**
  * Resourceful controller for interacting with orders
@@ -19,11 +19,11 @@ class OrderController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
+  async index({ request, response, view }) {
     const { page, qty, name } = request.all();
-    const query = Order.query();
-    if ( name ) {
-      query.where('name', 'like', '%'+name+'%');
+    const query = Order.query().with("apartment").with("order_type");
+    if (name) {
+      query.where("name", "like", "%" + name + "%");
     }
     return await query.paginate(page, qty);
   }
@@ -36,7 +36,7 @@ class OrderController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store({ request, response }) {
     const registerFields = Order.getRegisterFields();
     const data = request.only(registerFields);
     return await Order.create(data);
@@ -51,10 +51,12 @@ class OrderController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
+  async show({ params, request, response, view }) {
     return await Order.query()
-                          .where('id', params.id)
-                          .first()
+      .where("id", params.id)
+      .with("apartment")
+      .with("order_type")
+      .first();
   }
 
   /**
@@ -65,7 +67,7 @@ class OrderController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update({ params, request, response }) {
     const order = await Order.findOrFail(params.id);
     const registerFields = Order.getRegisterFields();
     const data = request.only(registerFields);
@@ -82,10 +84,10 @@ class OrderController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy({ params, request, response }) {
     const order = await Order.findOrFail(params.id);
     order.delete();
   }
 }
 
-module.exports = OrderController
+module.exports = OrderController;

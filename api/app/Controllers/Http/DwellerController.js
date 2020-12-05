@@ -1,10 +1,10 @@
-'use strict'
+"use strict";
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
-const Dweller = use('App/Models/Dweller');
+const Dweller = use("App/Models/Dweller");
 
 /**
  * Resourceful controller for interacting with Dwellers
@@ -19,11 +19,11 @@ class DwellerController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
+  async index({ request, response, view }) {
     const { page, qty, name } = request.all();
-    const query = Dweller.query();
-    if ( name ) {
-      query.where('name', 'like', '%'+name+'%');
+    const query = Dweller.query().with("dweller");
+    if (name) {
+      query.where("name", "like", "%" + name + "%");
     }
     return await query.paginate(page, qty);
   }
@@ -36,7 +36,7 @@ class DwellerController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store({ request, response }) {
     const registerFields = Dweller.getRegisterFields();
     const data = request.only(registerFields);
     return await Dweller.create(data);
@@ -51,11 +51,8 @@ class DwellerController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
-    return await Dweller.query()
-                          .where('id', params.id)
-                          .with('user')
-                          .first()
+  async show({ params, request, response, view }) {
+    return await Dweller.query().where("id", params.id).with("dweller").first();
   }
 
   /**
@@ -66,13 +63,13 @@ class DwellerController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
-    const Dweller = await Dweller.findOrFail(params.id);
+  async update({ params, request, response }) {
+    const dweller = await Dweller.findOrFail(params.id);
     const registerFields = Dweller.getRegisterFields();
     const data = request.only(registerFields);
-    Dweller.merge(data);
-    await Dweller.save();
-    return Dweller;
+    dweller.merge(data);
+    await dweller.save();
+    return dweller;
   }
 
   /**
@@ -83,10 +80,10 @@ class DwellerController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
-    const Dweller = await Dweller.findOrFail(params.id);
-    Dweller.delete();
+  async destroy({ params, request, response }) {
+    const dweller = await Dweller.findOrFail(params.id);
+    dweller.delete();
   }
 }
 
-module.exports = DwellerController
+module.exports = DwellerController;

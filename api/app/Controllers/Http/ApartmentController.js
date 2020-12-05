@@ -1,10 +1,10 @@
-'use strict'
+"use strict";
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
-const Apartment = use('App/Models/Apartment');
+const Apartment = use("App/Models/Apartment");
 
 /**
  * Resourceful controller for interacting with apartments
@@ -19,11 +19,11 @@ class ApartmentController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
-    const { page, qty, name } = request.all();
+  async index({ request, response, view }) {
+    const { page, qty, unit_number } = request.all();
     const query = Apartment.query();
-    if ( name ) {
-      query.where('name', 'like', '%'+name+'%');
+    if (unit_number) {
+      query.where("unit_number", "like", "%" + unit_number + "%").fetch();
     }
     return await query.paginate(page, qty);
   }
@@ -36,7 +36,7 @@ class ApartmentController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store({ request, response }) {
     const registerFields = Apartment.getRegisterFields();
     const data = request.only(registerFields);
     return await Apartment.create(data);
@@ -51,10 +51,20 @@ class ApartmentController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
+  async show({ params, request, response, view }) {
     return await Apartment.query()
-                          .where('id', params.id)
-                          .first()
+      .where("id", params.id)
+      .with("dwellers")
+      .with("guests")
+      .with("reservations")
+      .with("orders")
+      .with("messages")
+      .first();
+  }
+
+  async dwellers({ params }) {
+    const dweller = await Apartment.findOrFail(params.id);
+    return dweller.dwellers().with("dweller").fetch();
   }
 
   /**
@@ -65,7 +75,7 @@ class ApartmentController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update({ params, request, response }) {
     const apartment = await Apartment.findOrFail(params.id);
     const registerFields = Apartment.getRegisterFields();
     const data = request.only(registerFields);
@@ -82,10 +92,10 @@ class ApartmentController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy({ params, request, response }) {
     const apartment = await Apartment.findOrFail(params.id);
     apartment.delete();
   }
 }
 
-module.exports = ApartmentController
+module.exports = ApartmentController;

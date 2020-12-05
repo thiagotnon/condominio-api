@@ -1,20 +1,16 @@
-'use strict'
+"use strict";
 
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
-const Model = use('Model')
-const AbstractModel = use('App/Models/AbstractModels')
+const Model = use("Model");
+const AbstractModel = use("App/Models/AbstractModels");
 
 class Message extends AbstractModel {
   static getRegisterFields() {
-    return [
-      'title',
-      'message',
-      'apartment_id'
-    ]
+    return ["title", "message", "apartment_id"];
   }
   apartment() {
-    return this.belongsTo('App/Models/Apartment')
+    return this.belongsTo("App/Models/Apartment");
   }
 }
 
-module.exports = Message
+module.exports = Message;

@@ -7,7 +7,7 @@ class ReservationSchema extends Schema {
   up() {
     this.create("reservations", (table) => {
       table.increments();
-      table.string("date", 10).notNullable();
+      table.string("date", 10).notNullable().unique();
       table
         .integer("apartment_id")
         .unsigned()
@@ -19,12 +19,6 @@ class ReservationSchema extends Schema {
         .unsigned()
         .references("id")
         .inTable("leisure_spaces")
-        .notNullable();
-      table
-        .integer("reservation_list_id")
-        .unsigned()
-        .references("id")
-        .inTable("reservation_lists")
         .notNullable();
       table.timestamps();
     });

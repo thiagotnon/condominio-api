@@ -1,10 +1,10 @@
-'use strict'
+"use strict";
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
-const ReservationGuest = use('App/Models/ReservationGuest');
+const ReservationGuest = use("App/Models/ReservationGuest");
 
 /**
  * Resourceful controller for interacting with reservationGuests
@@ -19,11 +19,11 @@ class ReservationGuestController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
+  async index({ request, response, view }) {
     const { page, qty, name } = request.all();
     const query = ReservationGuest.query();
-    if ( name ) {
-      query.where('name', 'like', '%'+name+'%');
+    if (name) {
+      query.where("name", "like", "%" + name + "%");
     }
     return await query.paginate(page, qty);
   }
@@ -36,7 +36,7 @@ class ReservationGuestController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store({ request, response }) {
     const registerFields = ReservationGuest.getRegisterFields();
     const data = request.only(registerFields);
     return await ReservationGuest.create(data);
@@ -51,14 +51,12 @@ class ReservationGuestController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
-    return await ReservationGuest.query()
-                          .where('id', params.id)
-                          .first()
+  async show({ params, request, response, view }) {
+    return await ReservationGuest.query().where("id", params.id).first();
   }
 
-  async Reservation ({ params }) {
-    const reservation = await ReservationGuest.findOrFail(params.id)
+  async Reservation({ params }) {
+    const reservation = await ReservationGuest.findOrFail(params.id);
     return reservation.Reservation().fetch();
   }
   /**
@@ -69,7 +67,7 @@ class ReservationGuestController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update({ params, request, response }) {
     const reservationGuest = await ReservationGuest.findOrFail(params.id);
     const registerFields = ReservationGuest.getRegisterFields();
     const data = request.only(registerFields);
@@ -86,10 +84,10 @@ class ReservationGuestController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy({ params, request, response }) {
     const reservationGuest = await ReservationGuest.findOrFail(params.id);
     reservationGuest.delete();
   }
 }
 
-module.exports = ReservationGuestController
+module.exports = ReservationGuestController;

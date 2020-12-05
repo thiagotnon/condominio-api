@@ -28,9 +28,15 @@ Route.post("/espacos-de-lazer/:id/imagens", "ImageController.store").prefix(
 Route.get("images/:path", "ImageController.show");
 
 Route.group(() => {
-  Route.resource("/apartamentos", "ApartmentController")
+  Route.resource("/funcionarios", "EmployeeController")
+    .apiOnly()
+    .validator(new Map([[["store", "update"], "Employee"]]));
+
+  Route.resource("/unidades", "ApartmentController")
     .apiOnly()
     .validator(new Map([[["store", "update"], "Apartment"]]));
+
+  Route.get("/unidade/:id/moradores", "ApartmentController.dwellers");
 
   Route.resource("/hospedes", "GuestController")
     .apiOnly()
@@ -54,22 +60,19 @@ Route.group(() => {
 
   Route.resource("/reservas/convidados", "ReservationGuestController")
     .apiOnly()
-    .apiOnly()
     .validator(new Map([[["store", "update"], "ReservationGuest"]]));
 
   Route.resource("/reservas/lista-de-convidados", "ReservationListController")
-    .apiOnly()
     .apiOnly()
     .validator(new Map([[["store", "update"], "ReservationList"]]));
 
   Route.resource("/reservas", "ReservationController")
     .apiOnly()
-    .apiOnly()
     .validator(new Map([[["store", "update"], "Reservation"]]));
 
-  Route.resource("/usuario/perfil-de-usuario", "UserProfileController")
+  Route.resource("/moradores", "DwellerController")
     .apiOnly()
-    .validator(new Map([[["store", "update"], "UserProfile"]]));
+    .validator(new Map([[["store", "update"], "Dweller"]]));
 
   Route.resource("/usuarios", "UserController")
     .apiOnly()

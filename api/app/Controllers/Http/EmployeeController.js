@@ -1,8 +1,10 @@
-'use strict'
+"use strict";
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
+
+const Employee = use("App/Models/Employee");
 
 /**
  * Resourceful controller for interacting with employees
@@ -17,19 +19,13 @@ class EmployeeController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
-  }
-
-  /**
-   * Render a form to be used for creating a new employee.
-   * GET employees/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
+  async index({ request, response, view }) {
+    const { page, qty, name } = request.all();
+    const query = Employee.query().with("employee");
+    if (name) {
+      query.where("name", "like", "%" + name + "%").fetch();
+    }
+    return await query.paginate(page, qty);
   }
 
   /**
@@ -40,7 +36,10 @@ class EmployeeController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store({ request, response }) {
+    const registerFields = Employee.getRegisterFields();
+    const data = request.only(registerFields);
+    return await Employee.create(data);
   }
 
   /**
@@ -52,19 +51,11 @@ class EmployeeController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
-  }
-
-  /**
-   * Render a form to update an existing employee.
-   * GET employees/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
+  async show({ params, request, response, view }) {
+    return await Employee.query()
+      .where("id", params.id)
+      .with("employee")
+      .first();
   }
 
   /**
@@ -75,7 +66,13 @@ class EmployeeController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update({ params, request, response }) {
+    const employee = await Employee.findOrFail(params.id);
+    const registerFields = Employee.getRegisterFields();
+    const data = request.only(registerFields);
+    employee.merge(data);
+    await employee.save();
+    return employee;
   }
 
   /**
@@ -86,8 +83,10 @@ class EmployeeController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy({ params, request, response }) {
+    const employee = await Employee.findOrFail(params.id);
+    employee.delete();
   }
 }
 
-module.exports = EmployeeController
+module.exports = EmployeeController;

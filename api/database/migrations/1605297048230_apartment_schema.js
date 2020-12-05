@@ -8,8 +8,8 @@ class ApartmentSchema extends Schema {
     this.create("apartments", (table) => {
       table.increments();
       table.integer("unit_number").notNullable().unique();
-      table.string("block").notNullable().unique();
-      table.string("floor").notNullable();
+      table.string("block").notNullable();
+      table.integer("floor").notNullable();
       table.timestamps();
     });
   }

@@ -15,26 +15,31 @@ class ImageController {
    * POST images
    */
   async store({ params, request }) {
-    const leisureSpace = await LeisureSpace.findOrFail(params.id);
+    try {
+      const leisureSpace = await LeisureSpace.findOrFail(params.id);
+      const images = request.file("image", {
+        types: ["image"],
+        size: "2mb",
+      });
+      console.log(images);
+      await images.moveAll(Helpers.tmpPath("uploads"), (file) => ({
+        name: `${Date.now()}-${file.clientName}`,
+      }));
 
-    const images = request.file("image", {
-      types: ["image"],
-      size: "2mb",
-    });
+      if (!images.movedAll()) {
+        return images.errors();
+      }
 
-    await images.moveAll(Helpers.tmpPath("uploads"), (file) => ({
-      name: `${Date.now()}-${file.clientName}`,
-    }));
-
-    if (!images.movedAll()) {
-      return images.errors();
+      await Promise.all(
+        images
+          .movedList()
+          .map((image) =>
+            leisureSpace.images().create({ path: image.fileName })
+          )
+      );
+    } catch (error) {
+      console.log(`Erro de criação de imagem: ${error}`);
     }
-
-    await Promise.all(
-      images
-        .movedList()
-        .map((image) => leisureSpace.images().create({ path: image.fileName }))
-    );
   }
 }
 
